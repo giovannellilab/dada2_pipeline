@@ -1,21 +1,34 @@
+# Getting Started with Phyloseq: A Step-by-Step R Pipeline
+
+### Suggested color palettes
+Here you will find a series of color palettes used by our group to standardize figures across our papers. Let’s start with a few generic palettes we use consistently for generic data. The Viridis palette in the viridis R package.
+
+### Color code
+- Generic data: viridis
+- Temperature: plasma
+- pH: inverted mako
+
+### Placeholders and Categorical Data
+ColorBrewer 2.0 https://colorbrewer2.org provides excellent capabilities with sequential and diverging palettes that are color blind safe up to 11 different colors
+
 #loading libraries
 library(phyloseq)
-library(tidyverse)
-library(ape)
-library(microbiome)
+library(tidyverse) #automatically include several libraries among which ggplot2
+library(ape) #phylogenetic tree analysis
+library(microbiome) #bioinformatic tools
 library(ggthemes) # additional themes fro ggplot2
 library(ggpubr)
-library(vegan)
-library(repr)
+library(vegan) #statistics
+library(repr) 
 library(ggpmisc) #to use stat_poly_eq
 library(RColorBrewer) # nice color options
 library(gridExtra) # gridding plots
-library(viridis)
+library(viridis) #color palettes
 library(ggrepel)
 library(reshape2)
 library(knitr)
 set.seed(10000)
-options(repr.plot.width=16, repr.plot.height=12)
+options(repr.plot.width=16, repr.plot.height=12) #resize your plots
 
 theme_glab <- function(base_size = 25,
                     base_family = "",
@@ -69,6 +82,8 @@ head(env_data)
 env_data<-cbind(env_data[,1:9],env_data[,10:32] %>% mutate_if(is.character,as.numeric))
 env_data
 
+### Making Phyloseq Object
+
 #loading .rds files
 seqtab_nochim<-readRDS("rds/seqtab_nochim.rds")
 taxa<-readRDS("rds/taxa.rds")
@@ -81,6 +96,8 @@ prok_data_raw<-phyloseq(sample_data(env_data),
 prok_data_raw
 message("Total number of reads:")
 sum(readcount(prok_data_raw))
+
+### Cleaning Step I
 
 # Define a function to remove negative controls
 
@@ -103,6 +120,8 @@ prok_data
 sum(readcount(prok_data))
 (sum(readcount(prok_data))/sum(readcount(prok_data_raw)))*100# check percentage of reads after blank removal
 
+### Cleaning Step II
+
 # Clean up unwanted sequences from Eukarya, mitochrondria and chloroplast
 prok_data <- subset_taxa(prok_data,  (Kingdom != "Eukaryota") | is.na(Kingdom))
 prok_data <- subset_taxa(prok_data, (Order!="Chloroplast") | is.na(Order))
@@ -110,6 +129,8 @@ prok_data <- subset_taxa(prok_data, (Family!="Mitochondria") | is.na(Family))
 prok_data
 sum(readcount(prok_data))
 (sum(readcount(prok_data))/sum(readcount(prok_data_raw)))*100# check percentage of reads after cleaning step II
+
+### Cleaning Step III
 
 ## Removing the known DNA Extraction contaminants from Sheik et al., 2018
 # Assuming you are starting from a phyloseq object called prok_data_raw
@@ -316,6 +337,8 @@ sum(readcount(prok_ndata))
 prok_ra = transform_sample_counts(prok_ndata, function(x){x / sum(x)})
 prok_ra
 
+### Rarefaction Curves
+                                      
 #estimating rarefaction curves
 #svg("../plots/svg/rarefaction_curves.svg", width=12,height=12)
 rarecurve(as.matrix(data.frame(otu_table(prok_data_raw))), col='black', step=100 , lwd=3, ylab="ASVs", label=T)
@@ -324,6 +347,8 @@ rarecurve(as.matrix(data.frame(otu_table(prok_data_raw))), col='black', step=100
 #Checking column names
 print(colnames(env_data))
 
+### Alpha Diversity
+                                      
 plot_richness(prok_data_raw, measures=c("Observed", "Shannon", "Simpson"), x="type") + 
 geom_boxplot(aes(fill=type), size=0.25) +  
 scale_fill_viridis("Sample Type",option = "viridis", discrete=T, labels=c('Biofilm', 'Blk', 'Fluid', 'Sediment')) +
@@ -355,6 +380,8 @@ alpha_div_table<-alpha_div_summary[order(alpha_div_summary$Reads), ] %>%
 
 gtsave(alpha_div_table, "tables/alpha_div_table.pdf")
 
+### Taxonomic Composition
+                                      
 ## Agglomerate at a specific taxonomic level at the Genus level
 prok_ra_genus = tax_glom(prok_ra, "Genus", NArm = FALSE)
 prok_ra_family = tax_glom(prok_ra, "Family", NArm = FALSE)
@@ -445,6 +472,8 @@ plot_bar(pseq.gen_perc1, fill ="Genus", x='code') +
   theme(strip.text.x = element_text(size=14),
         legend.position = "bottom", aspect.ratio = 0.5)
 
+### Beta Diversity
+                                      
 ### NMDS Jaccard similarity index: Weighted and Unweighted
 
 prok_dist_wjac <- phyloseq::distance(prok_ndata, method = "jaccard")
@@ -520,9 +549,6 @@ ggarrange(nmds_wUnif_p,NA, nmds_uUnif_p,NA,
   common.legend = TRUE       
          )
 #ggsave("../plots/svg/nmds_w_uw_jacard.svg", width=16, height=16)
-
-
-
 
 
 save.image()
