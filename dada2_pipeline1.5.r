@@ -69,6 +69,7 @@ out1 <- filterAndTrim(fnFs1, filtFs1, fnRs1, filtRs1, truncLen=c(245,165),
 # in the entire Dada2 pipeline. feel free to try several parameter settings and
 # choose the best settings.Refer to Callahan et al. 2016 for details.
 head(out1)
+mean(out1[,2]/out1[,1])
 
 # Once the filter and trimming has been completed to satisfaction, proceede to
 # the error lerning. This is computationally intensive
@@ -191,6 +192,7 @@ head(track1) # check the number of reads retained at each step
             maxN=0, maxEE=c(2,2), truncQ=2, rm.phix=TRUE,
             trimLeft=17, compress=TRUE, multithread=TRUE)
     head(out2)
+    mean(out2[,2]/out2[,1])
     errF2 <- learnErrors(filtFs2, errorEstimationFunction=loessErrfun_mod, multithread=TRUE, randomize=TRUE)
     errR2 <- learnErrors(filtRs2, errorEstimationFunction=loessErrfun_mod, multithread=TRUE, randomize=TRUE)
     plotErrors(errF2, nominalQ=TRUE)
