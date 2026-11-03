@@ -401,18 +401,18 @@ library(MicEco)
 #Its core purpose is to clean a taxonomy table (tax_table) by replacing missing (NA) values 
 #with the name of the most specific known taxonomic classification available for that entry, 
 #automatically adding the corresponding rank as a prefix.
-pseq.phylum_perc1<-ps_tax_clean(prok_ra_phyla)
-pseq.class_perc1<-ps_tax_clean(prok_ra_class)
-pseq.order_perc1<-ps_tax_clean(prok_ra_order)
-pseq.family_perc1<-ps_tax_clean(prok_ra_family)
-pseq.gen_perc1<-ps_tax_clean(prok_ra_genus)
+pseq.phylum_taxclean <-ps_tax_clean(prok_ra_phyla)
+pseq.class_taxclean <-ps_tax_clean(prok_ra_class)
+pseq.order_taxclean <-ps_tax_clean(prok_ra_order)
+pseq.family_taxclean <-ps_tax_clean(prok_ra_family)
+pseq.gen_taxclean <-ps_tax_clean(prok_ra_genus)
 
 #Subset the relative abundance at 1%
-pseq.phylum_perc1 <- ps_prune(pseq.phylum_perc1, min.abundance = 0.01)
-pseq.class_perc1 <- ps_prune(pseq.class_perc1, min.abundance = 0.01)
-pseq.order_perc1 <- ps_prune(pseq.order_perc1, min.abundance = 0.01)
-pseq.family_perc1 <- ps_prune(pseq.family_perc1, min.abundance = 0.01)
-pseq.gen_perc1 <- ps_prune(pseq.gen_perc1, min.abundance = 0.01)
+pseq.phylum_perc1 <- ps_prune(pseq.phylum_taxclean, min.abundance = 0.01)
+pseq.class_perc1 <- ps_prune(pseq.class_taxclean, min.abundance = 0.01)
+pseq.order_perc1 <- ps_prune(pseq.order_taxclean, min.abundance = 0.01)
+pseq.family_perc1 <- ps_prune(pseq.family_taxclean, min.abundance = 0.01)
+pseq.gen_perc1 <- ps_prune(pseq.gen_taxclean, min.abundance = 0.01)
 
 #Barplot
 plot_bar(pseq.phylum_perc1, fill ="Phylum", x='code') +
