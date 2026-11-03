@@ -398,42 +398,21 @@ write.csv(summary_comb, "results/summary/summary_prok_ra_phylum.csv")
 
 library(MicEco)
 
-#Subset the relative abundance at 1%
-pseq.phylum_perc1 <- ps_prune(prok_ra_phyla, min.abundance = 0.01)
-pseq.class_perc1 <- ps_prune(prok_ra_class, min.abundance = 0.01)
-pseq.order_perc1 <- ps_prune(prok_ra_order, min.abundance = 0.01)
-pseq.family_perc1 <- ps_prune(prok_ra_family, min.abundance = 0.01)
-pseq.gen_perc1 <- ps_prune(prok_ra_genus, min.abundance = 0.01)
-
 #Its core purpose is to clean a taxonomy table (tax_table) by replacing missing (NA) values 
 #with the name of the most specific known taxonomic classification available for that entry, 
 #automatically adding the corresponding rank as a prefix.
-pseq.phylum_perc1<-ps_tax_clean(pseq.phylum_perc1)
-pseq.class_perc1<-ps_tax_clean(pseq.class_perc1)
-pseq.order_perc1<-ps_tax_clean(pseq.order_perc1)
-pseq.family_perc1<-ps_tax_clean(pseq.family_perc1)
-pseq.gen_perc1<-ps_tax_clean(pseq.gen_perc1)
+pseq.phylum_perc1<-ps_tax_clean(prok_ra_phyla)
+pseq.class_perc1<-ps_tax_clean(prok_ra_class)
+pseq.order_perc1<-ps_tax_clean(prok_ra_order)
+pseq.family_perc1<-ps_tax_clean(prok_ra_family)
+pseq.gen_perc1<-ps_tax_clean(prok_ra_genus)
 
-#Correct all the NA_NA with NA, avoiding issues making the barplots
-tax_phylum <- tax_table(pseq.phylum_perc1) %>% as.data.frame()
-tax_phylum[tax_phylum == "NA_NA"] <- NA
-tax_table(pseq.phylum_perc1) <- tax_table(as.matrix(tax_phylum))
-
-tax_class <- tax_table(pseq.class_perc1) %>% as.data.frame()
-tax_class[tax_class == "NA_NA"] <- NA
-tax_table(pseq.class_perc1) <- tax_table(as.matrix(tax_class))
-
-tax_order <- tax_table(pseq.order_perc1) %>% as.data.frame()
-tax_order[tax_order == "NA_NA"] <- NA
-tax_table(pseq.order_perc1) <- tax_table(as.matrix(tax_order))
-
-tax_family <- tax_table(pseq.family_perc1) %>% as.data.frame()
-tax_family[tax_family == "NA_NA"] <- NA
-tax_table(pseq.family_perc1) <- tax_table(as.matrix(tax_family))
-
-tax_genus <- tax_table(pseq.gen_perc1) %>% as.data.frame()
-tax_genus[tax_genus == "NA_NA"] <- NA
-tax_table(pseq.gen_perc1) <- tax_table(as.matrix(tax_genus))
+#Subset the relative abundance at 1%
+pseq.phylum_perc1 <- ps_prune(pseq.phylum_perc1, min.abundance = 0.01)
+pseq.class_perc1 <- ps_prune(pseq.class_perc1, min.abundance = 0.01)
+pseq.order_perc1 <- ps_prune(pseq.order_perc1, min.abundance = 0.01)
+pseq.family_perc1 <- ps_prune(pseq.family_perc1, min.abundance = 0.01)
+pseq.gen_perc1 <- ps_prune(pseq.gen_perc1, min.abundance = 0.01)
 
 #Barplot
 plot_bar(pseq.phylum_perc1, fill ="Phylum", x='code') +
